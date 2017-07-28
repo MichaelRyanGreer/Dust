@@ -1,0 +1,38 @@
+These are the instructions for setting up the dust app environment
+
+Instructions are based on the EVOThings Arduino 101 CurieLED connection guide
+	https://create.arduino.cc/projecthub/inmyorbit/build-your-own-app-that-connects-to-arduino-genuino-101-e55dfe
+
+1. Flash the Arduino 101 with the provided code.
+
+2. Download the EVOThings Studio.
+	https://evothings.com/download/
+
+3. Download the CGTek Viewer for your mobile device.
+	Available on the application stores of iPhone and Android.
+
+4. Open EVOThings Studio and click on the "Examples" tab.
+
+5. Click "Copy" under the "Arduino101 LED On/Off BLE" app.
+
+6. Go to the "My Apps" tab and select "More > Files".
+
+7. A file explorer window should open with the contents of this app; replace the default index.html with the one provided.
+
+8. Open index.html with your preferred text editor and change <<Your Phone Number>> on line 65 with your phone number. Remember to add a 1 at the beginning, and to make it a string.
+
+9. Save the file.
+
+10. Click on the "Connect" tab in EVOThings Studio. Follow the instructions to retrieve and input your cloud token.
+
+11. Click on "Get Key". Input the displayed 8-character key into the CGTek Viewer mobile app.
+
+12. After your mobile device is connected, click on the "My Apps" tab in EVOThings Studio.
+
+13. Click on "Run". Your mobile device should display a loading symbol. When the app is loaded, it should look like the picture in the video.
+
+14. Make sure your Arduino 101 is powered on and flashed with the correct code.
+
+15. Press the "Connect" button on the app. The text on the screen should display that a connection was made.
+
+16. If the "Read" button is pressed after the ardiuno has detected motion, a text will be sent to the mobile number inputted into the index.html file.

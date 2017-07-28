@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<!--
+This is an app that demonstrates how to control an Arduino101 board
+using BLE (Bluetooth Low Energy).
+-->
+<head>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, user-scalable=no
+		initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+
+	<title>Arduino101 LED On/Off BLE</title>
+
+	<style>
+		@import 'ui/css/evothings-app.css';
+	</style>
+
+	<script>
+	// Redirect console.log to Evothings Workbench.
+	if (window.hyper && window.hyper.log) { console.log = hyper.log }
+	window.onerror = function(msg, url, line)
+	{
+		console.log(msg + ": " + url + ":" + line);
+	};
+	</script>
+
+	<script src="cordova.js"></script>
+	<script src="libs/jquery/jquery.js"></script>
+	<script src="libs/evothings/evothings.js"></script>
+	<script src="libs/evothings/ui/ui.js"></script>
+	<script src="libs/evothings/arduinoble/arduinoble.js"></script>
+
+</head>
+
+<body ontouchstart=""><!-- ontouchstart="" enables low-delay CSS transitions. -->
+
+	<header>
+		<button class="back" onclick="history.back()">
+			<img src="ui/images/arrow-left.svg" />
+		</button>
+
+		<img class="logotype" src="ui/images/logo.svg" alt="Evothings" />
+
+		<!--<button class="menu" onclick=""><img src="ui/images/menu.svg" /></button>-->
+	</header>
+
+	<h1>Dust Bluetooth Reader</h1>
+
+	<p id="info">Initializing...</p>
+
+	<button class="yellow wide" onclick="app.connect()">CONNECT</button>
+
+	<br />
+
+	<button class="green wide big" onclick="app.readState()">READ</button>
+
+	<script>
+	// Application object.
+	var app = {}
+
+	// Connected device.
+	app.device = null;
+
+	var send_to = "<<Your Phone Number>>";
+
+	// Turn on LED.
+	app.readState = function()
+	{
+		//console.log("I am about to check");
+		app.check();
+	}
+
+	app.check = function()
+	{
+		app.device && app.device.readCharacteristic('19B10001-E8F2-537E-4F6C-D104768A1214',
+			function(data)
+			{
+				//console.log(data);
+				var view = new Uint8Array(data);
+				//console.log(view[0]);
+
+				if (view[0] == 1) {
+
+					console.log("Motion Detected!");
+
+					app.device.writeCharacteristic('19B10001-E8F2-537E-4F6C-D104768A1214',
+						new Uint8Array([0]),
+						function()
+						{
+							//console.log('Wrote 0');
+						},
+						function(errorCode)
+						{
+							//console.log('Error: ' + errorCode);
+						});
+
+					cordovaHTTP.get("https://api.tropo.com/1.0/sessions?action=create&token=416a4e7254625379664b69484f6578477573524851614d79756a4b745a786a514e547a506a6f4376594b4973&send_to="+send_to,
+						function(response)
+						{
+							//console.log(response);
+							console.log('Sent to: ' + send_to);
+						},
+						function(error)
+						{
+							//console.log(error);
+						});
+
+				}
+
+			},
+			function(errorCode)
+			{
+				console.log('read error:' + errorCode);
+			});
+	};
+
+	app.showMessage = function(info)
+	{
+		document.getElementById('info').innerHTML = info
+	};
+
+	// Called when BLE and other native functions are available.
+	app.onDeviceReady = function()
+	{
+		app.showMessage('Touch the connect button to begin.');
+	};
+
+	app.connect = function()
+	{
+		evothings.arduinoble.close();
+		
+		app.showMessage('Connecting...');
+
+		//console.log('bp0')
+
+		evothings.arduinoble.connect(
+			'accelNotify',
+			//'LED', // Advertised name of BLE device.
+			function(device)
+			{
+				app.device = device;
+				//console.log('bp1');
+				app.device.enableNotification('19B10001-E8F2-537E-4F6C-D104768A1214',
+					function(data)
+					{
+						console.log('bp2');
+						//showMessage('Accel data: ' + data);
+					},
+					function(errorCode)
+					{
+						console.log('subscribe error: ' + errorCode);
+						//showMessage('Notify Subscribe Error: ' + errorCode);
+					});
+				app.showMessage('Connected! Touch buttons to turn LED on/off.');
+			},
+			function(errorCode)
+			{
+				app.showMessage('Connect error: ' + errorCode + '.');
+			});
+	};
+
+	document.addEventListener(
+		'deviceready',
+		function() { evothings.scriptsLoaded(app.onDeviceReady) },
+		false);
+	</script>
+
+</body>
+
+</html>
