@@ -8,7 +8,7 @@ Instructions are based on the EVOThings Arduino 101 CurieLED connection guide
 2. Download the EVOThings Studio.
 	https://evothings.com/download/
 
-3. Download the CGTek Viewer for your mobile device.
+3. Download the EVOThings Viewer orCGTek Viewer for your mobile device.
 	Available on the application stores of iPhone and Android.
 
 4. Open EVOThings Studio and click on the "Examples" tab.
